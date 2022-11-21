@@ -24,11 +24,11 @@ public class PersonaService implements IPersonaService {
     @Override
     public BaseResponse<List<PersonaDTO>> getAllPersonas() throws Exception {
         try {
-            List<Persona> personaEntities = personaRepository.findAll();
+            List<Persona> personaDomain = personaRepository.findAll();
 
             var response = new BaseResponse<List<PersonaDTO>>();
             response.IsSucces = true;
-            response.DataResponse = personaEntities.stream()
+            response.DataResponse = personaDomain.stream()
                     .map(mapper::toDTO).collect(Collectors.toList());
             response.Message = ReplyMessage.MESSAGE_QUERY;
             return response;
@@ -115,7 +115,7 @@ public class PersonaService implements IPersonaService {
 
             var response = new BaseResponse<String>();
             response.IsSucces = true;
-            response.Message= ReplyMessage.MESSAGE_UPDATE;
+            response.Message = ReplyMessage.MESSAGE_UPDATE;
             return response;
 
         } catch (Exception e) {

@@ -23,11 +23,6 @@ public class PersonaRepository implements IPersonaRepository {
     @Override
     public List<Persona> findAll() {
         List<PersonaEntity> personaEntities = personaRepositorySpring.findAll();
-        /*List<Persona> personas = new ArrayList<>();
-        for (PersonaEntity personaEntity: personaEntities) {
-            personas.add(personaEntityMapper.toDomain(personaEntity))      ;
-        }
-        return personas;*/
         return personaEntities.stream().map(personaEntityMapper::toDomain).collect(Collectors.toList());
     }
 
