@@ -1,5 +1,6 @@
 package com.consorcio.consorcioapi_cleanarchitecture.domain;
 
+import com.consorcio.consorcioapi_cleanarchitecture.infrastructure.database.entity.EdificioEntity;
 import lombok.*;
 
 import java.util.ArrayList;

@@ -31,7 +31,8 @@ public class EdificioRepository implements IEdificioRepository {
 
     @Override
     public Edificio save(Edificio edificio) {
-        return null;
+        EdificioEntity edificioEntity = edificioEntityMapper.toEntity(edificio);
+        return edificioEntityMapper.toDomain(edificioRepositorySpring.save(edificioEntity));
     }
 
     @Override

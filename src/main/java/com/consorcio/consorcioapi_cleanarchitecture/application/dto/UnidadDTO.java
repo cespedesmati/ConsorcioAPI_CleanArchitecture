@@ -21,6 +21,8 @@ public class UnidadDTO {
 
     private String habitado;
 
+    private Integer codigoEdificio;
+
     private List<String> documentoDuenios;
 
     private List<String> documentoInquilinos;

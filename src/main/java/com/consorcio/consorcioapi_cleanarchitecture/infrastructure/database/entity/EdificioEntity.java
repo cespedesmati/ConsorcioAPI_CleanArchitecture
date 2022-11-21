@@ -26,7 +26,7 @@ public class EdificioEntity {
     @Column
     private String direccion;
 
-    @OneToMany
+    @OneToMany(mappedBy = "codigoEdificio")
     @ToString.Exclude
     private List<UnidadEntity> unidades;
 }

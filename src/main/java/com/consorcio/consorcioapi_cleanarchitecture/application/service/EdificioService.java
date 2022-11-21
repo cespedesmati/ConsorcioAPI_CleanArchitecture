@@ -137,6 +137,11 @@ public class EdificioService implements IEdificioService {
         }
     }
 
+    @Override
+    public void save(Edificio edificio) {
+        edificioRepository.save(edificio);
+    }
+
     private List<PersonaDTO> getPersonaDTOs(Set<Persona> personaSet) throws EdificioException {
         List<PersonaDTO> resultado = new ArrayList<>();
         for (Persona persona : personaSet)

@@ -1,5 +1,6 @@
 package com.consorcio.consorcioapi_cleanarchitecture.infrastructure.database.entity;
 import com.consorcio.consorcioapi_cleanarchitecture.application.exception.UnidadException;
+import com.consorcio.consorcioapi_cleanarchitecture.domain.Edificio;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +30,10 @@ public class UnidadEntity {
 
     @Column(nullable = false, columnDefinition = "varchar(1) default ''")
     private String habitado;
+
+    @ManyToOne
+    @JoinColumn(name = "codigo")
+    private EdificioEntity codigoEdificio;
 
     @ManyToMany
     @JoinTable(

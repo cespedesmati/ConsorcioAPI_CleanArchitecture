@@ -24,6 +24,8 @@ public class Unidad {
 
     private String habitado;
 
+    private Edificio codigoEdificio;
+
     private Set<Persona> duenios = new HashSet<>();
 
     private Set<Persona> inquilinos = new HashSet<>();

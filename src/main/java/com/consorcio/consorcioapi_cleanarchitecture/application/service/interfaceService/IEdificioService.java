@@ -30,5 +30,7 @@ public interface IEdificioService {
 
     BaseResponse<List<PersonaDTO>> habitantesPorEdificio(Integer codigo) throws Exception;
 
+    void save(Edificio edificio);
+
 
 }
