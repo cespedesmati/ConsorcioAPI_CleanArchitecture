@@ -5,9 +5,9 @@ import com.consorcio.consorcioapi_cleanarchitecture.application.exception.Person
 import com.consorcio.consorcioapi_cleanarchitecture.application.repository.IPersonaRepository;
 import com.consorcio.consorcioapi_cleanarchitecture.application.service.interfaceService.IPersonaService;
 import com.consorcio.consorcioapi_cleanarchitecture.application.service.mapper.IMapper;
-import com.consorcio.consorcioapi_cleanarchitecture.application.service.mapper.PersonaMapper;
+import com.consorcio.consorcioapi_cleanarchitecture.application.util.BaseResponse;
+import com.consorcio.consorcioapi_cleanarchitecture.application.util.ReplyMessage;
 import com.consorcio.consorcioapi_cleanarchitecture.domain.Persona;
-import com.consorcio.consorcioapi_cleanarchitecture.infrastructure.database.entity.PersonaEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,22 +19,50 @@ import java.util.stream.Collectors;
 public class PersonaService implements IPersonaService {
 
     private final IPersonaRepository personaRepository;
-    private IMapper<Persona,PersonaDTO> mapper;
+    private IMapper<Persona, PersonaDTO> mapper;
 
     @Override
-    public List<PersonaDTO> getAllPersonas() {
-        List<Persona> personaEntities = personaRepository.findAll();
-        return personaEntities.stream().map(mapper::toDTO).collect(Collectors.toList());
+    public BaseResponse<List<PersonaDTO>> getAllPersonas() throws Exception {
+        try {
+            List<Persona> personaEntities = personaRepository.findAll();
+
+            var response = new BaseResponse<List<PersonaDTO>>();
+            response.IsSucces = true;
+            response.DataResponse = personaEntities.stream()
+                    .map(mapper::toDTO).collect(Collectors.toList());
+            response.Message = ReplyMessage.MESSAGE_QUERY;
+            return response;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
-    public PersonaDTO findPersona(String documento) {
+    public BaseResponse<PersonaDTO> findPersonaToDto(String documento) throws Exception {
+        try {
+            Persona persona = findPersona(documento);
+            var response = new BaseResponse<PersonaDTO>();
+            response.IsSucces = true;
+            response.DataResponse = mapper.toDTO(persona);
+            response.Message = ReplyMessage.MESSAGE_QUERY;
+            return response;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public Persona findPersona(String documento) throws PersonaException {
         Persona persona = personaRepository.findByDocumento(documento);
-        return mapper.toDTO(persona);
+        if (persona == null) {
+            throw new PersonaException(ReplyMessage.MESSAGE_QUERY_EMPTY);
+        }
+        return persona;
+
     }
 
     @Override
-    public void createPersona(PersonaDTO personaDTO) throws PersonaException {
+    public BaseResponse<String> createPersona(PersonaDTO personaDTO) throws Exception {
         try {
             Persona persona = Persona.builder()
                     .documento(personaDTO.getDocumento())
@@ -43,8 +71,13 @@ public class PersonaService implements IPersonaService {
                     .admin(personaDTO.getAdmin() != null && personaDTO.getAdmin())
                     .build();
             personaRepository.save(persona);
-        }catch (Exception e){
-            throw  new PersonaException(e.getMessage());
+
+            var response = new BaseResponse<String>();
+            response.IsSucces = true;
+            response.Message = ReplyMessage.MESSAGE_SAVE;
+            return response;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -54,7 +87,39 @@ public class PersonaService implements IPersonaService {
     }
 
     @Override
-    public void deletePersona(Persona persona) {
-        personaRepository.delete(persona);
+    public BaseResponse<String> deletePersona(String documento) throws Exception {
+        try {
+            var response = new BaseResponse<String>();
+            Persona persona = findPersona(documento);
+            personaRepository.delete(persona);
+            response.IsSucces = true;
+            response.Message = ReplyMessage.MESSAGE_DELETE;
+            return response;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+
+    }
+
+    @Override
+    public BaseResponse<String> updatePersona(PersonaDTO personaDTO) throws Exception {
+        try {
+            Persona persona = findPersona(personaDTO.getDocumento());
+            var nombre = personaDTO.getNombre() == null ? persona.getNombre() : personaDTO.getNombre();
+            var contrasenia = personaDTO.getContrasenia() == null ? persona.getContrasenia() : personaDTO.getContrasenia();
+            var admin = personaDTO.getAdmin() == null ? persona.getAdmin() : personaDTO.getAdmin();
+            persona.setNombre(nombre);
+            persona.setContrasenia(contrasenia);
+            persona.setAdmin(admin);
+            personaRepository.save(persona);
+
+            var response = new BaseResponse<String>();
+            response.IsSucces = true;
+            response.Message= ReplyMessage.MESSAGE_UPDATE;
+            return response;
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 }
